@@ -1,0 +1,181 @@
+/* Basic Reset & Font Imports */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #6DD5ED, #2193B0); /* A nice blue gradient */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Container Styling */
+.container {
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Soft, modern shadow */
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    backdrop-filter: blur(5px); /* Subtle blur effect on background */
+    -webkit-backdrop-filter: blur(5px); /* For Safari */
+}
+
+h1 {
+    color: #2193B0;
+    margin-bottom: 25px;
+    font-size: 2.2em;
+    font-weight: 700;
+}
+
+/* Input Section Styling */
+.input-section {
+    display: flex; /* Use Flexbox for alignment */
+    gap: 10px; /* Space between input and button */
+    margin-bottom: 30px;
+}
+
+#taskInput {
+    flex-grow: 1; /* Allows input to take available space */
+    padding: 15px 20px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#taskInput:focus {
+    border-color: #2193B0;
+    box-shadow: 0 0 8px rgba(33, 147, 176, 0.4);
+}
+
+#addTaskBtn {
+    background-color: #2193B0; /* Blue color */
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: 600;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+#addTaskBtn:hover {
+    background-color: #176B87; /* Darker blue on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+#addTaskBtn:active {
+    transform: translateY(0);
+}
+
+/* Task List Styling */
+#taskList {
+    list-style: none; /* Remove default bullet points */
+    padding: 0;
+}
+
+#taskList li {
+    background-color: #f9f9f9;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    display: flex; /* Flexbox for aligning content inside each list item */
+    align-items: center;
+    justify-content: space-between; /* Distribute space between text and buttons */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Subtle shadow for list items */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    word-break: break-word; /* Prevents long words from overflowing */
+}
+
+#taskList li:last-child {
+    margin-bottom: 0; /* No margin for the last item */
+}
+
+#taskList li.completed {
+    background-color: #e6ffe6; /* Light green for completed tasks */
+    color: #666;
+    text-decoration: line-through;
+    opacity: 0.8;
+}
+
+/* Action Buttons within List Item */
+.task-actions {
+    display: flex;
+    gap: 8px; /* Space between action buttons */
+    margin-left: 15px; /* Space from task text */
+}
+
+.task-actions button {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease, transform 0.2s ease;
+    padding: 5px; /* Add padding for easier clicking */
+}
+
+.task-actions button:hover {
+    transform: scale(1.1);
+}
+
+.task-actions .complete-btn:hover {
+    color: #28a745; /* Green for complete */
+}
+
+.task-actions .delete-btn:hover {
+    color: #dc3545; /* Red for delete */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .input-section {
+        flex-direction: column; /* Stack input and button on small screens */
+    }
+
+    #addTaskBtn {
+        width: 100%; /* Full width button */
+    }
+
+    #taskInput, #addTaskBtn {
+        padding: 12px 15px;
+        font-size: 0.95em;
+    }
+
+    #taskList li {
+        flex-direction: column; /* Stack text and buttons */
+        align-items: flex-start; /* Align text to left */
+        padding: 12px 15px;
+    }
+
+    .task-actions {
+        margin-top: 10px;
+        margin-left: 0; /* Remove left margin */
+        width: 100%;
+        justify-content: flex-end; /* Align action buttons to the right */
+    }
+}
