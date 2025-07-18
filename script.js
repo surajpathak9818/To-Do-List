@@ -1,12 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     const taskInput = document.getElementById('taskInput');
+    const taskDateInput = document.getElementById('taskDate'); // Get the new date input
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskList = document.getElementById('taskList');
 
-    // Load tasks from local storage when the page loads
+    // Set today's date as default for the date input
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const dd = String(today.getDate()).padStart(2, '0');
+    taskDateInput.value = `${yyyy}-${mm}-${dd}`;
+
+
     loadTasks();
 
-    // Event listener for adding a task
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -14,12 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Event listener for handling clicks on task list (complete and delete)
     taskList.addEventListener('click', (e) => {
         const target = e.target;
-        const listItem = target.closest('li'); // Get the closest <li> ancestor
+        const listItem = target.closest('li');
 
-        if (!listItem) return; // If clicked outside an li, do nothing
+        if (!listItem) return;
 
         if (target.classList.contains('complete-btn')) {
             toggleComplete(listItem);
@@ -29,60 +35,65 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function addTask() {
-        const taskText = taskInput.value.trim(); // Get input value and remove whitespace
+        const taskText = taskInput.value.trim();
+        const taskDate = taskDateInput.value; // Get the date value (YYYY-MM-DD)
 
         if (taskText === '') {
             alert('Please enter a task!');
             return;
         }
+        // Optional: Add validation for date if needed, though type="date" handles basic format
 
-        // Create new list item
         const listItem = document.createElement('li');
+        // Include the date in the innerHTML for display
         listItem.innerHTML = `
-            <span>${taskText}</span>
+            <span>${taskText} <span class="task-date">(${formatDateForDisplay(taskDate)})</span></span>
             <div class="task-actions">
                 <button class="complete-btn" title="Mark as Complete">✔️</button>
                 <button class="delete-btn" title="Delete Task">✖️</button>
             </div>
         `;
-        // Initially, tasks are not completed, so add a data attribute for tracking
         listItem.dataset.completed = 'false';
+        // Store the date directly in a dataset attribute for easy retrieval
+        listItem.dataset.taskDate = taskDate;
 
         taskList.appendChild(listItem);
-        taskInput.value = ''; // Clear the input field
+        taskInput.value = ''; // Clear task text input
+        taskDateInput.value = `${yyyy}-${mm}-${dd}`; // Reset date to today
 
-        saveTasks(); // Save tasks to local storage
+        saveTasks();
     }
 
     function toggleComplete(listItem) {
-        listItem.classList.toggle('completed'); // Toggle the 'completed' class for styling
-        // Update the data-completed attribute
+        listItem.classList.toggle('completed');
         listItem.dataset.completed = listItem.classList.contains('completed').toString();
-        saveTasks(); // Save updated state
+        saveTasks();
     }
 
     function deleteTask(listItem) {
-        taskList.removeChild(listItem); // Remove the list item from the DOM
-        saveTasks(); // Save updated list
+        taskList.removeChild(listItem);
+        saveTasks();
     }
 
     function saveTasks() {
         const tasks = [];
         taskList.querySelectorAll('li').forEach(listItem => {
             tasks.push({
-                text: listItem.querySelector('span').textContent,
-                completed: listItem.classList.contains('completed')
+                text: listItem.querySelector('span').firstChild.textContent.trim(), // Get only task text
+                completed: listItem.classList.contains('completed'),
+                date: listItem.dataset.taskDate // Save the date
             });
         });
-        localStorage.setItem('tasks', JSON.stringify(tasks)); // Store as JSON string
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
     function loadTasks() {
-        const tasks = JSON.parse(localStorage.getItem('tasks')) || []; // Parse JSON or default to empty array
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
         tasks.forEach(task => {
             const listItem = document.createElement('li');
+            // Reconstruct innerHTML with the stored date
             listItem.innerHTML = `
-                <span>${task.text}</span>
+                <span>${task.text} <span class="task-date">(${formatDateForDisplay(task.date)})</span></span>
                 <div class="task-actions">
                     <button class="complete-btn" title="Mark as Complete">✔️</button>
                     <button class="delete-btn" title="Delete Task">✖️</button>
@@ -94,7 +105,16 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                  listItem.dataset.completed = 'false';
             }
+            // Set the dataset.taskDate when loading from storage
+            listItem.dataset.taskDate = task.date;
             taskList.appendChild(listItem);
         });
+    }
+
+    // Helper function to format date for display (e.g., YYYY-MM-DD to DD/MM/YYYY)
+    function formatDateForDisplay(dateString) {
+        if (!dateString) return 'No Date';
+        const [year, month, day] = dateString.split('-');
+        return `${day}/${month}/${year}`;
     }
 });
